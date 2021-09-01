@@ -1,20 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
+
+import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class graphics extends JPanel implements ActionListener {
     int sizeCell = 10;
+    int alive = 0;
     int xWidth = 1920/sizeCell;
     int yHeight = 1080/sizeCell;
     int[][] cells = new int[xWidth][yHeight];
     int[][] preCells = new int[xWidth][yHeight];
     boolean starts = true;
 
+    Random rand = new Random();
+
     public graphics(){
         setSize(1920,1080);
         setLayout(null);
         setBackground(Color.BLACK);
+
         new Timer(80, this).start();
     }
 
@@ -48,7 +54,7 @@ public class graphics extends JPanel implements ActionListener {
             for (int x=0; x<cells.length; x++){
                 for (int y=0; y<cells[0].length; y++){
 
-                    if ((int)(Math.random()*5) == 0){
+                    if ((rand.nextInt(2) == 0)){
                         cells[x][y] = 1;
                     }
 
@@ -70,7 +76,12 @@ public class graphics extends JPanel implements ActionListener {
             for (int y=0; y<cells[0].length; y++){
 
                 if (cells[x][y] == 1) {
+                    String s = Integer.toString(alive);
+
                     g.fillRect(x * sizeCell, y * sizeCell, sizeCell, sizeCell);
+
+                   // g.setColor(Color.white);
+                   // g.drawString(s, x*sizeCell, y * sizeCell);
                 }
 
             }
@@ -87,7 +98,6 @@ public class graphics extends JPanel implements ActionListener {
     }
 
     private int check(int x, int y){
-        int alive = 0;
 
         alive += cells[(x+xWidth-1)%xWidth][(y+yHeight-1)%yHeight];
         alive += cells[(x+xWidth)%xWidth][(y+yHeight-1)%yHeight];
@@ -107,26 +117,28 @@ public class graphics extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e){
 
-            int alive;
+        System.out.println("TIMER START");
 
-            for (int x = 0; x < cells.length; x++) {
-                for (int y = 0; y < cells[0].length; y++) {
+        for (int x = 0; x < cells.length; x++) {
+            for (int y = 0; y < cells[0].length; y++) {
 
-                    if (cells[x][y] == 1) {
-                        alive = check(x, y);
+                if (cells[x][y] == 1) {
+                    alive = check(x, y);
 
-                        if (alive == 3) {
-                            preCells[x][y] = 1;
-                        } else if (alive == 2 && cells[x][y] == 1) {
-                            preCells[x][y] = 1;
-                        } else {
-                            preCells[x][y] = 0;
-                        }
+                    if (alive == 3) {
+                        preCells[x][y] = 1;
+                    } else if (alive == 2 && cells[x][y] == 1) {
+                        preCells[x][y] = 1;
+                    } else {
+                        preCells[x][y] = 0;
                     }
-
                 }
-            }
 
-            repaint();
+            }
         }
+
+        repaint();
+
+    }
+
 }
